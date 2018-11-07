@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+  var spData = null;
+  var rowId = 1;
+  var maxId = 1;
+  function doData(json) {
+      spData = json.feed.entry;
+  }
+  
+  function drawCell(tr, val) {
+      var td = $("<td/>");
+      tr.append(td);
+      td.append(val);
+      return td;
+  }
+  function drawRow(table, rowData) {
+      if (rowData == null) return null;
+      if (rowData.length == 0) return null;
+	  if (rowData[1] == null
+	      || rowData[1].length < 5
+	      || rowData[1].trim().substring(0, 4) != "http") {
+	     return null;
+	  }
+	  
+      var tr = $("<tr/>");
+      table.append(tr);
+      for(var c=0; c<rowData.length; c++) {
+	      if (c == 0) {
+		      drawCell(tr, rowId);
+		  }
+		  else {
+		      drawCell(tr, '<a id="click' + rowId + '" target="_blank" href=' + rowData[c].trim() + '>' + rowData[c].trim() + '</a>');
+		  }
+      }
+	  rowId = rowId + 1;
+      return tr;
+  }
+  
+  function drawTable(parent) {
+      var table = $("<table/>");
+      parent.append(table);
+      return table;
+  }
+  
+  function readData(parent) {
+      var data = spData;
+      var table = drawTable(parent);
+      var rowData = [];
+      for(var r=0; r<data.length; r++) {
+	      if (r != 0) {
+              var cell = data[r]["gs$cell"];
+              var val = cell["$t"];
+              if (cell.col == 1) {
+                  drawRow(table, rowData);
+                  rowData = [];
+              }
+              rowData.push(val);
+		  }
+      }
+      drawRow(table, rowData);
+  }
+	function allOpen() {
+		var fromId = prompt("請輸入要從幾號ID開始開啟(1~" + (maxId - 10) + ")", "1");
+		if (parseInt(fromId, 10) == NaN) {
+			alert('你484輸入錯了啊?');
+			return;
+		}
+		var index = parseInt(fromId, 10);
+		if (index >= (maxId - 10)) {
+			alert('你484輸入錯了啊?');
+			return;
+		}
+		var counter = 0;
+		//私心放上自己的連結，ㄏ
+		OpenWindow('https://buy.line.me/R/?mgm=1111&umid=106441711&utm_source=mgm&utm_campaign=1111&sign=2f711dfaaf94c2f00d2d4f6b8279141e69e60584303e53729dc9142c47fb3f94&utm_medium=LINE');
+		
+		setInterval(function() {
+			if(index <= maxId) {
+				let max = index + 10;
+				for (; index <= max; index++) {
+					if ((index % 20) == 0) {
+						console.log('開到了' + index);
+					}
+					let href = document.getElementById('click' + index).href;
+					OpenWindow(href);
+				}
+			}
+		}, 5000);
+
+		function OpenWindow(link) {
+			var winid = window.open(link, '_blank');
+			setTimeout(() => {
+				winid.close();
+			}, 1500);
+		}
+	}
+  $(document).ready(function(){
+      readData($("#data"));
+	  maxId = rowId - 1;
+	  alert('目前最大ID為:' + maxId);
+  });
+  </script>   
+<script src="https://spreadsheets.google.com/feeds/cells/1rgZWawCiHLtvtFgvY9e0ZYfMfndtIZRvO1vERhzwiaU/2/public/values?alt=json-in-script&callback=doData"></script>
+<style type="text/css">
+  table {border-collapse: collapse; width: 100%;}
+  th, td {border: thin solid black; padding: 3px;}
+  tr.head th, tr.head td {background-color: #EDEDED; border-bottom: 4px double black;}
+  span.linetitle {font-weight: bold;}
+  div.lineclass {font-style: italic;}
+  .title, .result {width: 80%;}
+  .notes {width: 15%;}
+  h1 {text-align: center;}
+  body {margin: 12px; font-size: 12px;}
+</style>
+<style type="text/css" media="print">
+  form {display: none;}
+</style>
+</head>
+<body>
+<h2>1.開一個乾淨的Chrome(允許開啟封鎖視窗)</h2>
+<h2>2.前往 <a target='_blank' href='https://buy.line.me/'>https://buy.line.me/</a> 點右下角的 "我的" 登入</h2>
+<h2>3.點下方按鈕，讓子彈飛一會兒</h2>
+<button type="button" onclick="allOpen()">全開啦!幹 (安啦，10個10個開)</button><br/><br/>
+聯繫我: @EsnChg (Telegram)<br /><br />
+資料來源: <a target='_blank' href='https://docs.google.com/spreadsheets/d/1BdCSOICaNTn1XGEvDsJImVQy2XOYFs3mx05rbyAbidI/edit#gid=0'>https://docs.google.com/spreadsheets/d/1BdCSOICaNTn1XGEvDsJImVQy2XOYFs3mx05rbyAbidI</a><br /><br />
+<div id="data"/>
+</body>
+</html> 
