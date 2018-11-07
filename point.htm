@@ -23,21 +23,18 @@
   function drawRow(table, rowData) {
       if (rowData == null) return null;
       if (rowData.length == 0) return null;
-	  if (rowData[1] == null
-	      || rowData[1].length < 5
-	      || rowData[1].trim().substring(0, 4) != "http") {
+	  if (rowData[0] == null
+	      || rowData[0].length < 5
+	      || rowData[0].length > 200
+	      || rowData[0].trim().substring(0, 20) != "https://buy.line.me/") {
 	     return null;
 	  }
 	  
       var tr = $("<tr/>");
       table.append(tr);
       for(var c=0; c<rowData.length; c++) {
-	      if (c == 0) {
-		      drawCell(tr, rowId);
-		  }
-		  else {
-		      drawCell(tr, '<a id="click' + rowId + '" target="_blank" href=' + rowData[c].trim() + '>' + rowData[c].trim() + '</a>');
-		  }
+		  drawCell(tr, rowId);
+		  drawCell(tr, '<a id="click' + rowId + '" target="_blank" href=' + rowData[c].trim() + '>' + rowData[c].trim() + '</a>');
       }
 	  rowId = rowId + 1;
       return tr;
@@ -73,7 +70,7 @@
 			return;
 		}
 		var index = parseInt(fromId, 10);
-		if (index >= (maxId - 10)) {
+		if (index > (maxId - 10)) {
 			alert('你484輸入錯了啊?');
 			return;
 		}
@@ -85,8 +82,13 @@
 			if(index <= maxId) {
 				let max = index + 10;
 				for (; index <= max; index++) {
+					if (document.getElementById('click' + index) == null
+					    || document.getElementById('click' + index) == NaN) {
+						console.log('找不到第' + index + '筆，自動停止');
+						break;
+					}
 					if ((index % 20) == 0) {
-						console.log('開到了' + index);
+						console.log('從第' + index + '筆開始幫你打開10個網址');
 					}
 					let href = document.getElementById('click' + index).href;
 					OpenWindow(href);
@@ -107,7 +109,7 @@
 	  alert('目前最大ID為:' + maxId);
   });
   </script>   
-<script src="https://spreadsheets.google.com/feeds/cells/1rgZWawCiHLtvtFgvY9e0ZYfMfndtIZRvO1vERhzwiaU/2/public/values?alt=json-in-script&callback=doData"></script>
+<script src="https://spreadsheets.google.com/feeds/cells/1rgZWawCiHLtvtFgvY9e0ZYfMfndtIZRvO1vERhzwiaU/3/public/values?alt=json-in-script&callback=doData"></script>
 <style type="text/css">
   table {border-collapse: collapse; width: 100%;}
   th, td {border: thin solid black; padding: 3px;}
